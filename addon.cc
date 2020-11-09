@@ -24,10 +24,8 @@ Napi::String CreateObject(const Napi::CallbackInfo& info) {
  
   Napi::Env env = info.Env();
 
-  //имя, которое ввел пользователь
   Napi::String input = Napi::String::String(env, info[0].ToString());
   
- 
   Napi::String no = Napi::String::New(env, "NO");
   Napi::String yes = Napi::String::New(env, "YES");
 
@@ -39,11 +37,11 @@ Napi::String CreateObject(const Napi::CallbackInfo& info) {
   DWORD dwtotalentries;
   NET_API_STATUS result;
 
-  //по очереди сравниваем вариант с каждым пользователем в системе
+  
   result = NetUserEnum(NULL, dwlevel, dwfilter, (LPBYTE*)&theEntries, dwprefmaxlen, &dwentriesread, &dwtotalentries, NULL);
   for (int i = 0; i < dwentriesread; i++)
   {
-      //имя пользователя в системе LPWSTR to wstring
+      //LPWSTR to wstring
       std::wstring userw(theEntries[i].usri0_name);
 
       //wstring to string
@@ -52,14 +50,14 @@ Napi::String CreateObject(const Napi::CallbackInfo& info) {
       //string to Napi::String
       Napi::String User = Napi::String::New(env, user);
 
-      //если нашлось совпадение,отправляем ответ строку "YES"
+      //"YES"
       if (input == User) {
           return yes;
       }
   }
   NetApiBufferFree(theEntries);
 
-  //если не нашлось совпадение,отправляем ответ строку "NO"
+  //"NO"
   return no;
 }
 
